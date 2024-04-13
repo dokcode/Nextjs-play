@@ -1,18 +1,21 @@
+import { ConnectDB } from '../../../../lib/config/db';
+import  TodoModel  from '../../../../lib/models/TodoModel';
 import { NextResponse } from "next/server";
 
-export async function GET(params:any) {
-    return NextResponse.json({
-        hello:"World",
-    });
+const loadDb = async () => {
+    await ConnectDB();
 }
-export async function POST(request: Request) {
-    const data = await request.json()
-    return NextResponse.json({
-        data,
-    });
+loadDb();
+
+export async function GET (request: Request) {
+    const todos = await TodoModel.find({})
+    return NextResponse.json({todos:todos})
 }
-export async function PATCH(params:any) {
-    return NextResponse.json({
-        hello:"World",
-    });
+export async function POST (request: Request) {
+    const {title, description} = await request.json();
+    await TodoModel.create({
+        title,
+        description
+    })
+    return NextResponse.json({msg:"Todo created"})
 }
